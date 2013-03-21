@@ -1,7 +1,7 @@
 Name:               hen
 Version:            0.0.0
-Synopsis:           Haskell bidings to Xen hypervisor interface
-Description:        Haskell bidings to Xen hypervisor interface
+Synopsis:           Haskell bindings to Xen hypervisor interface
+Description:        Haskell bindings to Xen hypervisor interface
 License:            MIT
 License-file:       LICENSE
 Copyright:          Selectel
