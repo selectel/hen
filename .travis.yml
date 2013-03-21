@@ -1,0 +1,3 @@
+language: haskell
+before_script: "apt-get install libxen-dev"
+script: "cabal configure && cabal build"
