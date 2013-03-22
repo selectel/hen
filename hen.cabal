@@ -1,5 +1,5 @@
 Name:               hen
-Version:            0.0.0
+Version:            0.0.1
 Synopsis:           Haskell bindings to Xen hypervisor interface
 Description:        Haskell bindings to Xen hypervisor interface
 License:            MIT
@@ -28,7 +28,7 @@ Library
                       , lifted-base               == 0.2.*
                       , monad-control             == 0.3.*
                       , uuid                      == 1.2.*
-                      , bitset                    == 1.1.*
+                      , bitset                    == 1.2.*
 
     Exposed-modules:    System.Xen
                         System.Xen.High
