@@ -23,7 +23,7 @@ Library
 
     Build-depends:      base                      == 4.6.* || == 4.5.*
                       , containers                == 0.5.* || == 0.4.*
-                      , mtl                       == 2.1.*
+                      , mtl                       == 2.1.* || == 2.0.*
                       , transformers-base         == 0.4.*
                       , lifted-base               == 0.2.*
                       , monad-control             == 0.3.*
@@ -46,7 +46,7 @@ Test-suite hen-tests
 
     Build-depends:      base                      == 4.6.* || == 4.5.*
                       , containers                == 0.5.* || == 0.4.*
-                      , mtl                       == 2.1.*
+                      , mtl                       == 2.1.* || == 2.0.*
                       , transformers-base         == 0.4.*
                       , lifted-base               == 0.2.*
                       , monad-control             == 0.3.*
