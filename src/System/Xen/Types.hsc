@@ -87,7 +87,7 @@ data DomainInfo = DomainInfo
     , domainInfoMaxMemKb            :: {-# UNPACK #-} !Word32
     , domainInfoNubmerOfOnlineVcpus :: {-# UNPACK #-} !Word32
     , domainInfoMaxVcpuId           :: {-# UNPACK #-} !Word32
-    , domainInfoDomHandle           :: UUID
+    , domainInfoDomHandle           :: {-# UNPACK #-} !UUID
 #if XEN_SYSCTL_INTERFACE_VERSION == 8
     , domainInfoCpuPool             :: {-# UNPACK #-} !Word32
 #endif
