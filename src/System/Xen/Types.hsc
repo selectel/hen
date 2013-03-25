@@ -17,11 +17,12 @@ module System.Xen.Types
 
 #let alignment t = "%lu", (unsigned long) offsetof(struct {char x__; t (y__); }, y__)
 
-import Prelude hiding (elem)
+import Prelude hiding (elem, foldl)
 
 import Control.Applicative ((<$>))
-import Data.Bits (testBit)
+import Data.Bits (testBit, bit, (.|.))
 import Data.Maybe (catMaybes)
+import Data.Foldable (foldl)
 import Data.Word (Word32, Word64)
 import Foreign.C (CInt(..), CUInt(..))
 #if XEN_SYSCTL_INTERFACE_VERSION == 8
@@ -149,4 +150,25 @@ instance Storable DomainInfo where
         domainInfoCpuPool             <- #{peek xc_dominfo_t, cpupool} ptr
 #endif
         return $ DomainInfo { .. }
-    poke = error "Storable DomainInfo poke: not implemented"
+    poke ptr DomainInfo { .. } = do
+        #{poke xc_dominfo_t, domid} ptr domainInfoId
+        #{poke xc_dominfo_t, ssidref} ptr domainInfoSsidRef
+        let off = sizeOf domainInfoId + sizeOf domainInfoSsidRef
+        let flags :: CUInt = foldl (\a b -> a .|. bit (fromEnum b)) 0 domainInfoFlags
+        pokeByteOff ptr off flags
+        case domainInfoShutdownReason of
+            Nothing -> return ()
+            Just reason -> #{poke xc_dominfo_t, shutdown_reason} ptr reason
+        #{poke xc_dominfo_t, nr_pages} ptr domainInfoNumberOfPages
+#if XEN_SYSCTL_INTERFACE_VERSION == 8
+        #{poke xc_dominfo_t, nr_shared_pages} ptr domainInfoNumberOfSharedPages
+#endif
+        #{poke xc_dominfo_t, shared_info_frame} ptr domainInfoSharedInfoFrame
+        #{poke xc_dominfo_t, cpu_time} ptr domainInfoCpuTime
+        #{poke xc_dominfo_t, max_memkb} ptr domainInfoMaxMemKb
+        #{poke xc_dominfo_t, nr_online_vcpus} ptr domainInfoNubmerOfOnlineVcpus
+        #{poke xc_dominfo_t, max_vcpu_id} ptr domainInfoMaxVcpuId
+        #{poke xc_dominfo_t, handle} ptr domainInfoDomHandle
+#if XEN_SYSCTL_INTERFACE_VERSION == 8
+        #{poke xc_dominfo_t, cpupool} ptr domainInfoCpuPool
+#endif
