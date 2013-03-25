@@ -22,7 +22,7 @@ Library
     Default-language:   Haskell2010
 
     Build-depends:      base                      == 4.6.* || == 4.5.*
-                      , containers                == 0.5.*
+                      , containers                == 0.5.* || == 0.4.*
                       , mtl                       == 2.1.*
                       , transformers-base         == 0.4.*
                       , lifted-base               == 0.2.*
@@ -45,7 +45,7 @@ Test-suite hen-tests
     Type:             exitcode-stdio-1.0
 
     Build-depends:      base                      == 4.6.* || == 4.5.*
-                      , containers                == 0.5.*
+                      , containers                == 0.5.* || == 0.4.*
                       , mtl                       == 2.1.*
                       , transformers-base         == 0.4.*
                       , lifted-base               == 0.2.*
