@@ -48,7 +48,7 @@ newtype XcHandle = XcHandle CInt
 
 -- | Domain id, wrapper around 'Word32'.
 newtype DomId = DomId { unDomId :: Word32 }
-    deriving (Eq, Ord, Show, Storable)
+    deriving (Eq, Ord, Show, Read, Storable)
 
 -- | Domain flags. It's translated from xc_dominfo structure, so it's possible to
 -- be mutual exclusion flags in one domain, e.g. 'DomainFlagShutdown' and
@@ -61,7 +61,7 @@ data DomainFlag = DomainFlagDying
                 | DomainFlagRunning
                 | DomainFlagHVM
                 | DomainFlagDebugged
-    deriving (Enum, Eq, Ord, Show)
+    deriving (Enum, Eq, Ord, Show, Read)
 
 -- | Domain shutdown reason it's only meaningful if domain has 'DomainFlagShutdown'
 -- flag.
@@ -70,7 +70,7 @@ data DomainShutdownReason = DomainShutdownReasonPoweroff
                           | DomainShutdownReasonSuspend
                           | DomainShutdownReasonCrash
                           | DomainShutdownReasonWatchdog
-    deriving (Eq, Ord, Show)
+    deriving (Eq, Ord, Show, Read)
 
 -- | Information about a single domain.
 data DomainInfo = DomainInfo
@@ -91,7 +91,7 @@ data DomainInfo = DomainInfo
 #if XEN_SYSCTL_INTERFACE_VERSION == 8
     , domainInfoCpuPool             :: {-# UNPACK #-} !Word32
 #endif
-    } deriving (Eq, Ord, Show)
+    } deriving (Eq, Ord, Show, Read)
 
 -- | Constats used in this instance defined in <xen/sched.h>.
 instance Storable DomainShutdownReason where
