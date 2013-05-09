@@ -31,6 +31,7 @@ module System.Xen
     , DomainShutdownReason(..)
     , DomainInfo(..)
     -- * High-level API
+    , XenT
     , Xen
     , domainGetInfo
     , runXen
@@ -38,6 +39,6 @@ module System.Xen
 
 import System.Xen.Errors (XcHandleOpenError(..), InvalidDomainShutdownReason(..),
                           DomainGetInfoError(..))
-import System.Xen.High (Xen, domainGetInfo, runXen)
+import System.Xen.High (XenT, Xen, domainGetInfo, runXen)
 import System.Xen.Types (DomId(..), DomainFlag(..), DomainShutdownReason(..),
                          DomainInfo(..))
