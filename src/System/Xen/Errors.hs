@@ -12,13 +12,13 @@ module System.Xen.Errors
     , getErrno
     ) where
 
-import Control.Exception.Lifted (Exception)
+import Control.Exception (Exception)
 import Data.Typeable (Typeable)
 import Foreign.C (CInt)
 import Foreign.C.Error (Errno(..))
 import qualified Foreign.C.Error as Error
 
-import Control.Monad.Base (MonadBase(liftBase))
+import Control.Monad.Trans (MonadIO(liftIO))
 
 deriving instance Ord Errno
 deriving instance Show Errno
@@ -47,5 +47,5 @@ data DomainGetInfoError = DomainGetInfoError Errno
 instance Exception DomainGetInfoError
 
 -- | Generalized version of 'Foreign.C.Error.getErrno'
-getErrno :: MonadBase IO m => m Errno
-getErrno = liftBase Error.getErrno
+getErrno :: MonadIO m => m Errno
+getErrno = liftIO Error.getErrno

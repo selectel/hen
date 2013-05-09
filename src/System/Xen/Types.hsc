@@ -31,7 +31,7 @@ import Foreign.C (CIntPtr(..))
 import Foreign.Ptr (Ptr, castPtr)
 import Foreign.Storable (Storable(..))
 
-import Control.Exception.Lifted (throwIO)
+import Control.Monad.Exception (throwM)
 import Data.UUID (UUID)
 import Data.BitSet (BitSet)
 import qualified Data.BitSet as BitSet
@@ -104,7 +104,7 @@ instance Storable DomainShutdownReason where
         #{const SHUTDOWN_suspend}  -> return DomainShutdownReasonSuspend
         #{const SHUTDOWN_crash}    -> return DomainShutdownReasonCrash
         #{const SHUTDOWN_watchdog} -> return DomainShutdownReasonWatchdog
-        invalid           -> throwIO $ InvalidDomainShutdownReason invalid
+        invalid           -> throwM $ InvalidDomainShutdownReason invalid
     poke ptr a = poke (castPtr ptr :: Ptr CInt) $ case a of
         DomainShutdownReasonPoweroff -> #{const SHUTDOWN_poweroff}
         DomainShutdownReasonReboot   -> #{const SHUTDOWN_reboot}
