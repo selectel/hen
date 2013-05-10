@@ -29,6 +29,7 @@ Library
 
     Exposed-modules:    System.Xen
                         System.Xen.High
+                        System.Xen.High.Internal
                         System.Xen.Types
                         System.Xen.Errors
                         System.Xen.Mid
