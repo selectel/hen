@@ -20,8 +20,11 @@ import Control.Monad.Reader (MonadReader(..), ReaderT, runReaderT, mapReaderT, a
 import Control.Monad.RWS (MonadRWS)
 import Control.Monad.State (MonadState(..))
 import Control.Monad.Writer (MonadWriter(..))
+
 import Control.Monad.Trans.Identity (IdentityT(..))
 import Control.Monad.Trans (MonadIO, MonadTrans(lift))
+import qualified Control.Monad.Trans.Cont as Cont
+import qualified Control.Monad.Trans.Error as Error
 import qualified Control.Monad.Trans.State.Lazy as LazyState
 import qualified Control.Monad.Trans.State.Strict as StrictState
 import qualified Control.Monad.Trans.Writer.Lazy as LazyWriter
@@ -35,7 +38,7 @@ import qualified System.Xen.Mid as Mid
 ------------------------------------------------------------------------------
 -- * The mtl style typeclass
 
-class (Functor m, MonadIO m, MonadException m) => MonadXen m where
+class (Functor m, MonadIO m) => MonadXen m where
     -- | Open new connection to the hypervisor, run any @Xen@ action and close
     -- connection if nessesary. This function can fail with @Either SomeException@ with
     -- 'System.Xen.Errors.XcHandleOpenError' and any error of providing @Xen@ action.
@@ -43,6 +46,14 @@ class (Functor m, MonadIO m, MonadException m) => MonadXen m where
     -- | Helper function for creating high-level interface functions from mid-level.
     -- Generally high-level function is just @highLevel = withXenHandle midLevel@.
     withXenHandle :: (XcHandle -> m a) -> m a
+
+instance MonadXen m => MonadXen (Cont.ContT r m) where
+    runXen = Cont.mapContT id . runXen
+    withXenHandle = Cont.mapContT id . withXenHandle
+
+instance (MonadXen m, Error.Error e) => MonadXen (Error.ErrorT e m) where
+    runXen = Error.mapErrorT id . runXen
+    withXenHandle = Error.mapErrorT id . withXenHandle
 
 deriving instance MonadXen m => MonadXen (IdentityT m)
 
