@@ -1,4 +1,4 @@
 language: haskell
-before_install: "cabal update; git clone https://github.com/ekmett/exceptions.git; cabal-dev add-source exceptions"
+before_install: "cabal update; git clone https://github.com/ekmett/exceptions.git; cabal install ./exceptions"
 before_script: "sudo apt-get install libxen-dev"
 script: "cabal configure && cabal build"
