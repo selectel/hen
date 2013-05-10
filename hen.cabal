@@ -22,11 +22,10 @@ Library
     Default-language:   Haskell2010
 
     Build-depends:      base                      == 4.6.* || == 4.5.*
-                      , containers                == 0.5.* || == 0.4.*
                       , mtl                       == 2.1.* || == 2.0.*
                       , exceptions                == 0.1.*
                       , uuid                      == 1.2.*
-                      , bitset                    == 1.4.*
+                      , bitset                    >= 1.4.0 ||  < 1.4.2
 
     Exposed-modules:    System.Xen
                         System.Xen.High
@@ -43,11 +42,10 @@ Test-suite hen-tests
     Type:             exitcode-stdio-1.0
 
     Build-depends:      base                      == 4.6.* || == 4.5.*
-                      , containers                == 0.5.* || == 0.4.*
                       , mtl                       == 2.1.* || == 2.0.*
                       , exceptions                == 0.1.*
                       , uuid                      == 1.2.*
-                      , bitset                    == 1.4.*
+                      , bitset                    >= 1.4.0 ||  < 1.4.2
                       , hen
 
                       , test-framework             == 0.8.*
