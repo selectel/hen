@@ -1,4 +1,9 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE CPP #-}
 
 module System.Xen.High.Internal
     ( XenT(..)
@@ -8,16 +13,27 @@ module System.Xen.High.Internal
 
 import Control.Applicative (Applicative)
 import Control.Exception (SomeException)
+import Data.Monoid (Monoid)
 
 import Control.Monad.Exception (MonadException, try, bracket)
-import Control.Monad.Reader (ReaderT, runReaderT, ask)
+import Control.Monad.Reader (MonadReader(..), ReaderT, runReaderT, mapReaderT, ask)
+import Control.Monad.RWS (MonadRWS)
+import Control.Monad.State (MonadState(..))
+import Control.Monad.Writer (MonadWriter(..))
+import Control.Monad.Trans.Identity (IdentityT(..))
 import Control.Monad.Trans (MonadIO, MonadTrans(lift))
+import qualified Control.Monad.Trans.State.Lazy as LazyState
+import qualified Control.Monad.Trans.State.Strict as StrictState
+import qualified Control.Monad.Trans.Writer.Lazy as LazyWriter
+import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
+import qualified Control.Monad.Trans.RWS.Lazy as LazyRWS
+import qualified Control.Monad.Trans.RWS.Strict as StrictRWS
 
 import System.Xen.Types (XcHandle)
 import qualified System.Xen.Mid as Mid
 
-newtype XenT m a = XenT (ReaderT XcHandle m a)
-    deriving (Functor, Applicative, Monad, MonadTrans, MonadIO, MonadException)
+------------------------------------------------------------------------------
+-- * The mtl style typeclass
 
 class (Functor m, MonadIO m, MonadException m) => MonadXen m where
     -- | Open new connection to the hypervisor, run any @Xen@ action and close
@@ -28,10 +44,64 @@ class (Functor m, MonadIO m, MonadException m) => MonadXen m where
     -- Generally high-level function is just @highLevel = withXenHandle midLevel@.
     withXenHandle :: (XcHandle -> m a) -> m a
 
+deriving instance MonadXen m => MonadXen (IdentityT m)
+
+instance MonadXen m => MonadXen (LazyState.StateT s m) where
+    runXen = LazyState.mapStateT id . runXen
+    withXenHandle = LazyState.mapStateT id . withXenHandle
+
+instance MonadXen m => MonadXen (StrictState.StateT s m) where
+    runXen = StrictState.mapStateT id . runXen
+    withXenHandle = StrictState.mapStateT id . withXenHandle
+
+instance MonadXen m => MonadXen (ReaderT r m) where
+    runXen = mapReaderT id . runXen
+    withXenHandle = mapReaderT id . withXenHandle
+
+instance (MonadXen m, Monoid w) => MonadXen (LazyWriter.WriterT w m) where
+    runXen = LazyWriter.mapWriterT id . runXen
+    withXenHandle = LazyWriter.mapWriterT id . withXenHandle
+
+instance (MonadXen m, Monoid w) => MonadXen (StrictWriter.WriterT w m) where
+    runXen = StrictWriter.mapWriterT id . runXen
+    withXenHandle = StrictWriter.mapWriterT id . withXenHandle
+
+instance (MonadXen m, Monoid w) => MonadXen (LazyRWS.RWST r w s m) where
+    runXen = LazyRWS.mapRWST id . runXen
+    withXenHandle = LazyRWS.mapRWST id . withXenHandle
+
+instance (MonadXen m, Monoid w) => MonadXen (StrictRWS.RWST r w s m) where
+    runXen = StrictRWS.mapRWST id . runXen
+    withXenHandle = StrictRWS.mapRWST id . withXenHandle
+
+-- * The @transformers@-style monad transfomer
+------------------------------------------------------------------------------
+
+newtype XenT m a = XenT { unXenT :: ReaderT XcHandle m a }
+    deriving (Functor, Applicative, Monad, MonadTrans, MonadIO, MonadException)
+
+type Xen = XenT IO
+
 instance (Functor m, MonadIO m, MonadException m) => MonadXen (XenT m) where
     runXen (XenT f) = try $ withNewHandle $ lift . runReaderT f
       where
         withNewHandle = bracket Mid.interfaceOpen Mid.interfaceClose
     withXenHandle f = f =<< XenT ask
 
-type Xen = XenT IO
+instance MonadState s m => MonadState s (XenT m) where
+    get = lift get
+    put = lift . put
+#if MIN_VERSION_mtl(2,1,0)
+    state = lift . state
+#endif
+
+instance MonadReader r m => MonadReader r (XenT m) where
+    ask = lift ask
+    local f = XenT . mapReaderT (local f) . unXenT
+
+instance MonadWriter w m => MonadWriter w (XenT m) where
+    tell = lift . tell
+    listen = XenT . listen . unXenT
+    pass = XenT . pass . unXenT
+
+instance MonadRWS r w s m => MonadRWS r w s (XenT m)
