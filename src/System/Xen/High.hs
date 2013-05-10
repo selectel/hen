@@ -1,8 +1,4 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE CPP #-}
 
 -- | High-level interface to @XenCtrl@. Contains `Xen` monad and provides a safe way
 -- to run any `Xen` computation.

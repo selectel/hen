@@ -1,5 +1,4 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
-{-# LANGUAGE FlexibleContexts #-}
 
 -- | Mid-level interface to @XenCtrl@. Functions that provided by this module are
 -- version-independent from @Xen@ and raise real exceptions instead of confusing
