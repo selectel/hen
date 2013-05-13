@@ -4,10 +4,10 @@ module System.Xen.High
     ( XenT
     , Xen
     , domainGetInfo
-    , runXen
+    , runXenT
     ) where
 
-import System.Xen.High.Internal (XenT, Xen, MonadXen(withXenHandle, runXen))
+import System.Xen.High.Internal (XenT, Xen, MonadXen(withXenHandle), runXenT)
 import System.Xen.Types (DomainInfo)
 import qualified System.Xen.Mid as Mid
 

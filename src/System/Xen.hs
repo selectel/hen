@@ -14,10 +14,10 @@
 --
 -- > module Main (main) where
 -- >
--- > import System.Xen (runXen, domainGetInfo)
+-- > import System.Xen (runXenT, domainGetInfo)
 -- >
 -- > main :: IO ()
--- > main = print =<< runXen domainGetInfo
+-- > main = print =<< runXenT domainGetInfo
 
 module System.Xen
     (
@@ -34,11 +34,11 @@ module System.Xen
     , XenT
     , Xen
     , domainGetInfo
-    , runXen
+    , runXenT
     ) where
 
 import System.Xen.Errors (XcHandleOpenError(..), InvalidDomainShutdownReason(..),
                           DomainGetInfoError(..))
-import System.Xen.High (XenT, Xen, domainGetInfo, runXen)
+import System.Xen.High (XenT, Xen, domainGetInfo, runXenT)
 import System.Xen.Types (DomId(..), DomainFlag(..), DomainShutdownReason(..),
                          DomainInfo(..))

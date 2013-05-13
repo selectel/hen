@@ -9,6 +9,7 @@ module System.Xen.High.Internal
     ( XenT(..)
     , Xen
     , MonadXen(..)
+    , runXenT
     ) where
 
 import Control.Applicative (Applicative)
@@ -39,50 +40,37 @@ import qualified System.Xen.Mid as Mid
 -- * The mtl style typeclass
 
 class (Functor m, MonadIO m) => MonadXen m where
-    -- | Open new connection to the hypervisor, run any @Xen@ action and close
-    -- connection if nessesary. This function can fail with @Either SomeException@ with
-    -- 'System.Xen.Errors.XcHandleOpenError' and any error of providing @Xen@ action.
-    runXen :: m a -> m (Either SomeException a)
     -- | Helper function for creating high-level interface functions from mid-level.
     -- Generally high-level function is just @highLevel = withXenHandle midLevel@.
     withXenHandle :: (XcHandle -> m a) -> m a
 
 instance MonadXen m => MonadXen (Cont.ContT r m) where
-    runXen = Cont.mapContT id . runXen
     withXenHandle = Cont.mapContT id . withXenHandle
 
 instance (MonadXen m, Error.Error e) => MonadXen (Error.ErrorT e m) where
-    runXen = Error.mapErrorT id . runXen
     withXenHandle = Error.mapErrorT id . withXenHandle
 
 deriving instance MonadXen m => MonadXen (IdentityT m)
 
 instance MonadXen m => MonadXen (LazyState.StateT s m) where
-    runXen = LazyState.mapStateT id . runXen
     withXenHandle = LazyState.mapStateT id . withXenHandle
 
 instance MonadXen m => MonadXen (StrictState.StateT s m) where
-    runXen = StrictState.mapStateT id . runXen
     withXenHandle = StrictState.mapStateT id . withXenHandle
 
 instance MonadXen m => MonadXen (ReaderT r m) where
-    runXen = mapReaderT id . runXen
     withXenHandle = mapReaderT id . withXenHandle
 
 instance (MonadXen m, Monoid w) => MonadXen (LazyWriter.WriterT w m) where
-    runXen = LazyWriter.mapWriterT id . runXen
     withXenHandle = LazyWriter.mapWriterT id . withXenHandle
 
 instance (MonadXen m, Monoid w) => MonadXen (StrictWriter.WriterT w m) where
-    runXen = StrictWriter.mapWriterT id . runXen
     withXenHandle = StrictWriter.mapWriterT id . withXenHandle
 
 instance (MonadXen m, Monoid w) => MonadXen (LazyRWS.RWST r w s m) where
-    runXen = LazyRWS.mapRWST id . runXen
     withXenHandle = LazyRWS.mapRWST id . withXenHandle
 
 instance (MonadXen m, Monoid w) => MonadXen (StrictRWS.RWST r w s m) where
-    runXen = StrictRWS.mapRWST id . runXen
     withXenHandle = StrictRWS.mapRWST id . withXenHandle
 
 -- * The @transformers@-style monad transfomer
@@ -94,9 +82,6 @@ newtype XenT m a = XenT { unXenT :: ReaderT XcHandle m a }
 type Xen = XenT IO
 
 instance (Functor m, MonadIO m, MonadException m) => MonadXen (XenT m) where
-    runXen (XenT f) = try $ withNewHandle $ lift . runReaderT f
-      where
-        withNewHandle = bracket Mid.interfaceOpen Mid.interfaceClose
     withXenHandle f = f =<< XenT ask
 
 instance MonadState s m => MonadState s (XenT m) where
@@ -116,3 +101,11 @@ instance MonadWriter w m => MonadWriter w (XenT m) where
     pass = XenT . pass . unXenT
 
 instance MonadRWS r w s m => MonadRWS r w s (XenT m)
+
+-- | Open new connection to the hypervisor, run any @Xen@ action and close
+-- connection if nessesary. This function can fail with @Either SomeException@ with
+-- 'System.Xen.Errors.XcHandleOpenError' and any error of providing @Xen@ action.
+runXenT :: (Functor m, MonadIO m, MonadException m) => XenT m a -> m (Either SomeException a)
+runXenT (XenT f) = try $ withNewHandle $ runReaderT f
+  where
+    withNewHandle = bracket Mid.interfaceOpen Mid.interfaceClose
