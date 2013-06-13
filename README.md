@@ -28,10 +28,10 @@ Example
 ```haskell
 module Main (main) where
 
-import System.Xen (runXen, domainGetInfo)
+import System.Xen (runXenT, domainGetInfo)
 
 main :: IO ()
-main = print =<< runXen domainGetInfo
+main = print =<< runXenT domainGetInfo
 ```
 
 Installation
