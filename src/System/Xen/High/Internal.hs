@@ -16,7 +16,7 @@ import Control.Applicative (Applicative)
 import Control.Exception (SomeException)
 import Data.Monoid (Monoid)
 
-import Control.Monad.Exception (MonadException, try, bracket)
+import Control.Monad.Catch (MonadCatch, try, bracket)
 import Control.Monad.Reader (MonadReader(..), ReaderT, runReaderT, mapReaderT, ask)
 import Control.Monad.RWS (MonadRWS)
 import Control.Monad.State (MonadState(..))
@@ -77,11 +77,11 @@ instance (MonadXen m, Monoid w) => MonadXen (StrictRWS.RWST r w s m) where
 ------------------------------------------------------------------------------
 
 newtype XenT m a = XenT { unXenT :: ReaderT XcHandle m a }
-    deriving (Functor, Applicative, Monad, MonadTrans, MonadIO, MonadException)
+    deriving (Functor, Applicative, Monad, MonadTrans, MonadIO, MonadCatch)
 
 type Xen = XenT IO
 
-instance (Functor m, MonadIO m, MonadException m) => MonadXen (XenT m) where
+instance (Functor m, MonadIO m, MonadCatch m) => MonadXen (XenT m) where
     withXenHandle f = f =<< XenT ask
 
 instance MonadState s m => MonadState s (XenT m) where
@@ -105,7 +105,7 @@ instance MonadRWS r w s m => MonadRWS r w s (XenT m)
 -- | Open new connection to the hypervisor, run any @Xen@ action and close
 -- connection if nessesary. This function can fail with @Either SomeException@ with
 -- 'System.Xen.Errors.XcHandleOpenError' and any error of providing @Xen@ action.
-runXenT :: (Functor m, MonadIO m, MonadException m) => XenT m a -> m (Either SomeException a)
+runXenT :: (Functor m, MonadIO m, MonadCatch m) => XenT m a -> m (Either SomeException a)
 runXenT (XenT f) = try $ withNewHandle $ runReaderT f
   where
     withNewHandle = bracket Mid.interfaceOpen Mid.interfaceClose

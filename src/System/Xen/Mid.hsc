@@ -16,7 +16,7 @@ import Control.Monad (void, when, forM)
 import Foreign.Marshal.Alloc (allocaBytes)
 import Foreign.Storable (peekElemOff, sizeOf)
 
-import Control.Monad.Exception (throwM)
+import Control.Monad.Catch (throwM)
 import Control.Monad.Trans (MonadIO(liftIO))
 
 import System.Xen.Errors (DomainGetInfoError(..), XcHandleOpenError(..), getErrno)

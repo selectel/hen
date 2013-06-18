@@ -31,7 +31,7 @@ import Foreign.C (CIntPtr(..))
 import Foreign.Ptr (Ptr, castPtr)
 import Foreign.Storable (Storable(..))
 
-import Control.Monad.Exception (throwM)
+import Control.Monad.Catch (throwM)
 import Data.UUID (UUID)
 import Data.BitSet (BitSet)
 import qualified Data.BitSet as BitSet
