@@ -1,6 +1,13 @@
 hen changelog
 =============
 
+0.1.0.1
+-------
+
+Released on June 19th, 2013
+
+Technical release, fixes broken hackage distribution.
+
 0.1.0
 -----
 
