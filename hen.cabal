@@ -1,5 +1,5 @@
 Name:               hen
-Version:            0.0.3
+Version:            0.1.0
 Synopsis:           Haskell bindings to Xen hypervisor interface
 Description:        Haskell bindings to Xen hypervisor interface
 License:            MIT

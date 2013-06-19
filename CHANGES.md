@@ -1,6 +1,14 @@
 hen changelog
 =============
 
+0.1.0
+-----
+
+Released on June 19th, 2013
+
+Migrated to exceptions library from monad-control/lifted-base/transformers-base.
+Added `XenT` transformer and mtl-style `MonadXen` typeclass.
+
 0.0.3
 -----
 
