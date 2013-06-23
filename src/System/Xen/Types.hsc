@@ -77,8 +77,8 @@ data DomainShutdownReason = DomainShutdownReasonPoweroff
 data DomainInfo = DomainInfo
     { domainInfoId                  :: {-# UNPACK #-} !DomId
     , domainInfoSsidRef             :: {-# UNPACK #-} !Word32
-    , domainInfoFlags               :: BitSet DomainFlag
-    , domainInfoShutdownReason      :: Maybe DomainShutdownReason
+    , domainInfoFlags               :: !(BitSet DomainFlag)
+    , domainInfoShutdownReason      :: !(Maybe DomainShutdownReason)
     , domainInfoNumberOfPages       :: {-# UNPACK #-} !Word32
 #if XEN_SYSCTL_INTERFACE_VERSION == 8
     , domainInfoNumberOfSharedPages :: {-# UNPACK #-} !Word32
