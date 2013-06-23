@@ -5,6 +5,7 @@ module System.Xen.High
     , Xen
     , domainGetInfo
     , domainPause
+    , domainUnpause
     , runXenT
     ) where
 
@@ -22,3 +23,7 @@ domainGetInfo = withXenHandle Mid.domainGetInfo
 -- however it does not receive any timeslices from the hypervisor.
 domainPause :: MonadXen m => DomId -> m Bool
 domainPause = withXenHandle . Mid.domainPause
+
+-- Unpause a domain. The domain should have been previously paused.
+domainUnpause :: MonadXen m => DomId -> m Bool
+domainUnpause = withXenHandle . Mid.domainUnpause

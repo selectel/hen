@@ -8,6 +8,7 @@ module System.Xen.Low
     , xc_interface_close
     , xc_domain_getinfo
     , xc_domain_pause
+    , xc_domain_unpause
     ) where
 
 #include <xenctrl.h>
@@ -58,5 +59,11 @@ foreign import ccall unsafe "xenctrl.h xc_domain_getinfo"
 -- however it does not receive any timeslices from the hypervisor.
 foreign import ccall unsafe "xenctrl.h xc_domain_pause"
     xc_domain_pause :: XcHandle -- ^ Handle to the open hypervisor interface
+                    -> DomId    -- ^ First domain to enumerate from.
+                    -> IO CInt  -- ^ 0 if success, -1 if error
+
+-- This function unpauses a domain. The domain should have been previously paused.
+foreign import ccall unsafe "xenctrl.h xc_domain_unpause"
+    xc_domain_unpause :: XcHandle -- ^ Handle to the open hypervisor interface
                     -> DomId    -- ^ First domain to enumerate from.
                     -> IO CInt  -- ^ 0 if success, -1 if error

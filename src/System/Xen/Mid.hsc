@@ -9,6 +9,7 @@ module System.Xen.Mid
     , interfaceClose
     , domainGetInfo
     , domainPause
+    , domainUnpause
     ) where
 
 #include <xenctrl.h>
@@ -22,7 +23,7 @@ import Control.Monad.Trans (MonadIO(liftIO))
 
 import System.Xen.Errors (DomainGetInfoError(..), XcHandleOpenError(..), getErrno)
 import System.Xen.Low (xc_interface_open, xc_interface_close,
-                       xc_domain_getinfo, xc_domain_pause)
+                       xc_domain_getinfo, xc_domain_pause, xc_domain_unpause)
 import System.Xen.Types (XcHandle(..), DomId(..), DomainInfo)
 
 -- | Open the connection to the hypervisor interface, can fail with
@@ -61,3 +62,7 @@ domainGetInfo handle = liftIO $ allocaBytes size $ \ptr -> do
 -- however it does not receive any timeslices from the hypervisor.
 domainPause :: MonadIO m => DomId -> XcHandle -> m Bool
 domainPause domid handle = liftIO $ fmap (== 0) $ xc_domain_pause handle domid
+
+-- Unpause a domain. The domain should have been previously paused.
+domainUnpause :: MonadIO m => DomId -> XcHandle -> m Bool
+domainUnpause domid handle = liftIO $ fmap (== 0) $ xc_domain_unpause handle domid
