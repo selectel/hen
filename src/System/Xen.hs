@@ -34,11 +34,13 @@ module System.Xen
     , XenT
     , Xen
     , domainGetInfo
+    , domainPause
     , runXenT
     ) where
 
 import System.Xen.Errors (XcHandleOpenError(..), InvalidDomainShutdownReason(..),
                           DomainGetInfoError(..))
-import System.Xen.High (XenT, Xen, domainGetInfo, runXenT)
+import System.Xen.High (XenT, Xen, domainGetInfo, domainPause,
+                        runXenT)
 import System.Xen.Types (DomId(..), DomainFlag(..), DomainShutdownReason(..),
                          DomainInfo(..))

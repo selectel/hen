@@ -7,6 +7,7 @@ module System.Xen.Low
     ( xc_interface_open
     , xc_interface_close
     , xc_domain_getinfo
+    , xc_domain_pause
     ) where
 
 #include <xenctrl.h>
@@ -45,10 +46,17 @@ foreign import ccall unsafe "xc_interface_close"
 -- one exists. It is, therefore, important in this case to make sure the
 -- domain requested was the one returned.
 foreign import ccall unsafe "xenctrl.h xc_domain_getinfo"
-    xc_domain_getinfo :: XcHandle  -- ^ Handle to the open hypervisor interface
-                      -> DomId -- ^ First domain to enumerate from.
-                      -> CUInt -- ^ The number of requested domains
+    xc_domain_getinfo :: XcHandle        -- ^ Handle to the open hypervisor interface
+                      -> DomId           -- ^ First domain to enumerate from.
+                      -> CUInt           -- ^ The number of requested domains
                       -> Ptr DomainInfo  -- ^ Pointer to the structure that will
                                          -- contain the information for
                                          -- enumerated domains
-                      -> IO CInt  -- ^ Number of domains enumerated, -1 on error
+                      -> IO CInt         -- ^ Number of domains enumerated, -1 on error
+
+-- | This function pauses a domain. A paused domain still exists in memory
+-- however it does not receive any timeslices from the hypervisor.
+foreign import ccall unsafe "xenctrl.h xc_domain_pause"
+    xc_domain_pause :: XcHandle -- ^ Handle to the open hypervisor interface
+                    -> DomId    -- ^ First domain to enumerate from.
+                    -> IO CInt  -- ^ 0 if success, -1 if error
