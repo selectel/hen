@@ -22,19 +22,18 @@ import Control.Monad.Catch (throwM)
 import Control.Monad.Trans (MonadIO(liftIO))
 
 import System.Xen.Errors (DomainGetInfoError(..), XcHandleOpenError(..), getErrno)
-import System.Xen.Low (xc_interface_open, xc_interface_close,
-                       xc_domain_getinfo, xc_domain_pause, xc_domain_unpause)
 import System.Xen.Types (XcHandle(..), DomId(..), DomainInfo)
+import qualified System.Xen.Low as Low
 
 -- | Open the connection to the hypervisor interface, can fail with
 -- 'System.Xen.Errors.XcHandleOpenError'.
 interfaceOpen :: MonadIO m => m XcHandle
 interfaceOpen = liftIO $ do
 #if XEN_SYSCTL_INTERFACE_VERSION == 8
-    i@(XcHandle ptr) <- xc_interface_open 0 0 0
+    i@(XcHandle ptr) <- Low.xc_interface_open 0 0 0
     when (ptr `elem` [-1, 0]) $ getErrno >>= throwM . XcHandleOpenError
 #elif XEN_SYSCTL_INTERFACE_VERSION == 6
-    i@(XcHandle h) <- xc_interface_open
+    i@(XcHandle h) <- Low.xc_interface_open
     when (h == -1) $ getErrno >>= throwM . XcHandleOpenError
 #endif
     return i
@@ -42,14 +41,14 @@ interfaceOpen = liftIO $ do
 -- | Close an open hypervisor interface, ignores all possible errors but all the
 -- same can fail with segfault or sutin.
 interfaceClose :: (MonadIO m, Functor m) => XcHandle -> m ()
-interfaceClose = void . liftIO . xc_interface_close
+interfaceClose = void . liftIO . Low.xc_interface_close
 
 -- | Returns a list of currently runing domains, 1024 maximum, can fail with
 -- 'System.Xen.Errors.InvalidDomainShutdownReason' and
 -- 'System.Xen.Errors.DomainGetInfoError'.
 domainGetInfo :: MonadIO m => XcHandle -> m [DomainInfo]
 domainGetInfo handle = liftIO $ allocaBytes size $ \ptr -> do
-     wrote <- fmap fromIntegral $ xc_domain_getinfo handle (dom0) count ptr
+     wrote <- fmap fromIntegral $ Low.xc_domain_getinfo handle (dom0) count ptr
      when (wrote == -1) $ getErrno >>= throwM . DomainGetInfoError
      forM [0 .. wrote - 1] $ peekElemOff ptr
   where
@@ -61,8 +60,8 @@ domainGetInfo handle = liftIO $ allocaBytes size $ \ptr -> do
 -- | Pause domain. A paused domain still exists in memory
 -- however it does not receive any timeslices from the hypervisor.
 domainPause :: MonadIO m => DomId -> XcHandle -> m Bool
-domainPause domid handle = liftIO $ fmap (== 0) $ xc_domain_pause handle domid
+domainPause domid handle = liftIO $ fmap (== 0) $ Low.xc_domain_pause handle domid
 
 -- Unpause a domain. The domain should have been previously paused.
 domainUnpause :: MonadIO m => DomId -> XcHandle -> m Bool
-domainUnpause domid handle = liftIO $ fmap (== 0) $ xc_domain_unpause handle domid
+domainUnpause domid handle = liftIO $ fmap (== 0) $ Low.xc_domain_unpause handle domid
