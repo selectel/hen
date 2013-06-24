@@ -28,6 +28,6 @@ domainGetInfo = withXenHandle Mid.domainGetInfo
 domainPause :: MonadXen m => DomId -> m Bool
 domainPause = withXenHandle . Mid.domainPause
 
--- Unpause a domain. The domain should have been previously paused.
+-- | Unpause a domain. The domain should have been previously paused.
 domainUnpause :: MonadXen m => DomId -> m Bool
 domainUnpause = withXenHandle . Mid.domainUnpause
