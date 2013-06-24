@@ -5,7 +5,7 @@
 
 module System.Xen.Low
     (
-      -- * Handle
+      -- * Interface
       xc_interface_open
     , xc_interface_close
       -- * Domain

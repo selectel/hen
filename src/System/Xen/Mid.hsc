@@ -5,9 +5,13 @@
 -- error codes and @errno@.
 
 module System.Xen.Mid
-    ( interfaceOpen
+    (
+      -- * Interface
+      interfaceOpen
     , interfaceClose
+      -- * Domain
     , domainGetInfo
+      -- ** Domain pause
     , domainPause
     , domainUnpause
     ) where
