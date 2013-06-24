@@ -6,12 +6,12 @@
 
 module System.Xen.Mid
     (
-      -- * Interface
+    -- * Interface
       interfaceOpen
     , interfaceClose
-      -- * Domain
+    -- * Domain
     , domainGetInfo
-      -- ** Domain pause
+    -- ** Domain pause
     , domainPause
     , domainUnpause
     ) where

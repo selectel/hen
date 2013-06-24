@@ -5,12 +5,12 @@
 
 module System.Xen.Low
     (
-      -- * Interface
+    -- * Interface
       xc_interface_open
     , xc_interface_close
-      -- * Domain
+    -- * Domain
     , xc_domain_getinfo
-      -- ** Domain pause
+    -- ** Domain pause
     , xc_domain_pause
     , xc_domain_unpause
     ) where

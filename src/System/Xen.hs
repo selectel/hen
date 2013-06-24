@@ -31,12 +31,15 @@ module System.Xen
     , DomainShutdownReason(..)
     , DomainInfo(..)
     -- * High-level API
+    -- ** Monad stuff
     , XenT
     , Xen
+    , runXenT
+    -- ** Domain
     , domainGetInfo
+    -- *** Domain pause
     , domainPause
     , domainUnpause
-    , runXenT
     ) where
 
 import System.Xen.Errors (XcHandleOpenError(..), InvalidDomainShutdownReason(..),

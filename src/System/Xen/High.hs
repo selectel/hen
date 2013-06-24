@@ -1,12 +1,16 @@
 -- | High-level interface to @XenCtrl@. Contains `Xen` monad and provides a safe way
 -- to run any `Xen` computation.
 module System.Xen.High
-    ( XenT
+    (
+    -- * Monad stuff
+      XenT
     , Xen
+    , runXenT
+    -- * Domain
     , domainGetInfo
+    -- * Domain pause
     , domainPause
     , domainUnpause
-    , runXenT
     ) where
 
 import System.Xen.High.Internal (XenT, Xen, MonadXen(withXenHandle), runXenT)
