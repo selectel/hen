@@ -4,9 +4,13 @@
 -- a ffi call to corresponding c function.
 
 module System.Xen.Low
-    ( xc_interface_open
+    (
+      -- * Handle
+      xc_interface_open
     , xc_interface_close
+      -- * Domain
     , xc_domain_getinfo
+      -- ** Domain pause
     , xc_domain_pause
     , xc_domain_unpause
     ) where
