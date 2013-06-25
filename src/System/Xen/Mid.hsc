@@ -16,6 +16,7 @@ module System.Xen.Mid
     , domainUnpause
     -- ** Domain powerstate
     , domainShutdown
+    , domainDestroy
     ) where
 
 #include <xenctrl.h>
@@ -82,3 +83,8 @@ domainShutdown domid reason handle = liftIO $ fmap (== 0) $ allocaBytes size $ \
     Low.xc_domain_shutdown handle domid intReason
   where
     size = sizeOf (undefined :: DomainShutdownReason)
+
+-- | Destroy a domain.  Destroying a domain removes the domain completely from memory.
+-- This function should be called after 'domainShutdown' to free up the domain resources.
+domainDestroy :: MonadIO m => DomId -> XcHandle -> m Bool
+domainDestroy domid handle = liftIO $ fmap (== 0) $ Low.xc_domain_destroy handle domid

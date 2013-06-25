@@ -13,6 +13,7 @@ module System.Xen.High
     , domainUnpause
     -- ** Domain powerstate
     , domainShutdown
+    , domainDestroy
     ) where
 
 import System.Xen.High.Internal (XenT, Xen, MonadXen(withXenHandle), runXenT)
@@ -37,4 +38,9 @@ domainUnpause = withXenHandle . Mid.domainUnpause
 -- | Shutdown domain. This is intended for use in fully-virtualized domains where
 -- this operation is analogous to the sched_op operations in a paravirtualized domain.
 domainShutdown :: MonadXen m => DomId -> DomainShutdownReason -> m Bool
-domainShutdown domain reason = withXenHandle $ Mid.domainShutdown domain reason
+domainShutdown domid reason = withXenHandle $ Mid.domainShutdown domid reason
+
+-- | Destroy a domain.  Destroying a domain removes the domain completely from memory.
+-- This function should be called after 'domainShutdown' to free up the domain resources.
+domainDestroy :: MonadXen m => DomId -> m Bool
+domainDestroy = withXenHandle . Mid.domainDestroy

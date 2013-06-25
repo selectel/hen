@@ -15,6 +15,7 @@ module System.Xen.Low
     , xc_domain_unpause
     -- ** Domain powerstate
     , xc_domain_shutdown
+    , xc_domain_destroy
     ) where
 
 #include <xenctrl.h>
@@ -82,3 +83,11 @@ foreign import ccall unsafe "xenctrl.h xc_domain_shutdown"
                        -> DomId    -- ^ Domain to shutdown
                        -> CInt     -- ^ Shutdown reason
                        -> IO CInt  -- ^ 0 if success, -1 if error
+
+-- | This function will destroy a domain. Destroying a domain removes the domain
+-- completely from memory. This function should be called after sending the
+-- domain a SHUTDOWN control message to free up the domain resources.
+foreign import ccall unsafe "xenctrl.h xc_domain_destroy"
+    xc_domain_destroy :: XcHandle -- ^ Handle to the open hypervisor interface
+                      -> DomId    -- ^ Domain to destroy
+                      -> IO CInt  -- ^ 0 if success, -1 if error
