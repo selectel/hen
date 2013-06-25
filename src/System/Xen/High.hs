@@ -34,6 +34,7 @@ domainPause = withXenHandle . Mid.domainPause
 domainUnpause :: MonadXen m => DomId -> m Bool
 domainUnpause = withXenHandle . Mid.domainUnpause
 
--- | Unpause a domain. The domain should have been previously paused.
+-- | Shutdown domain. This is intended for use in fully-virtualized domains where
+-- this operation is analogous to the sched_op operations in a paravirtualized domain.
 domainShutdown :: MonadXen m => DomId -> DomainShutdownReason -> m Bool
-domainShutdown d r = withXenHandle $ Mid.domainShutdown d r
+domainShutdown domain reason = withXenHandle $ Mid.domainShutdown domain reason
