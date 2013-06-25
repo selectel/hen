@@ -40,11 +40,13 @@ module System.Xen
     -- *** Domain pause
     , domainPause
     , domainUnpause
+    -- *** Domain powerstate
+    , domainShutdown
     ) where
 
 import System.Xen.Errors (XcHandleOpenError(..), InvalidDomainShutdownReason(..),
                           DomainGetInfoError(..))
-import System.Xen.High (XenT, Xen, domainGetInfo, domainPause, domainUnpause,
+import System.Xen.High (XenT, Xen, domainGetInfo, domainPause, domainUnpause, domainShutdown,
                         runXenT)
 import System.Xen.Types (DomId(..), DomainFlag(..), DomainShutdownReason(..),
                          DomainInfo(..))

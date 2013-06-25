@@ -8,13 +8,15 @@ module System.Xen.High
     , runXenT
     -- * Domain
     , domainGetInfo
-    -- * Domain pause
+    -- ** Domain pause
     , domainPause
     , domainUnpause
+    -- ** Domain powerstate
+    , domainShutdown
     ) where
 
 import System.Xen.High.Internal (XenT, Xen, MonadXen(withXenHandle), runXenT)
-import System.Xen.Types (DomainInfo, DomId)
+import System.Xen.Types (DomainInfo, DomId, DomainShutdownReason)
 import qualified System.Xen.Mid as Mid
 
 -- | Returns a lift of domains, this function can fail with
@@ -31,3 +33,7 @@ domainPause = withXenHandle . Mid.domainPause
 -- | Unpause a domain. The domain should have been previously paused.
 domainUnpause :: MonadXen m => DomId -> m Bool
 domainUnpause = withXenHandle . Mid.domainUnpause
+
+-- | Unpause a domain. The domain should have been previously paused.
+domainShutdown :: MonadXen m => DomId -> DomainShutdownReason -> m Bool
+domainShutdown d r = withXenHandle $ Mid.domainShutdown d r

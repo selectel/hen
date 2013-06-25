@@ -14,19 +14,22 @@ module System.Xen.Mid
     -- ** Domain pause
     , domainPause
     , domainUnpause
+    -- ** Domain powerstate
+    , domainShutdown
     ) where
 
 #include <xenctrl.h>
 
 import Control.Monad (void, when, forM)
 import Foreign.Marshal.Alloc (allocaBytes)
-import Foreign.Storable (peekElemOff, sizeOf)
+import Foreign.Storable (peekElemOff, peek, poke, sizeOf)
+import Foreign.Ptr (castPtr)
 
 import Control.Monad.Catch (throwM)
 import Control.Monad.Trans (MonadIO(liftIO))
 
 import System.Xen.Errors (DomainGetInfoError(..), XcHandleOpenError(..), getErrno)
-import System.Xen.Types (XcHandle(..), DomId(..), DomainInfo)
+import System.Xen.Types (XcHandle(..), DomId(..), DomainShutdownReason, DomainInfo)
 import qualified System.Xen.Low as Low
 
 -- | Open the connection to the hypervisor interface, can fail with
@@ -69,3 +72,13 @@ domainPause domid handle = liftIO $ fmap (== 0) $ Low.xc_domain_pause handle dom
 -- Unpause a domain. The domain should have been previously paused.
 domainUnpause :: MonadIO m => DomId -> XcHandle -> m Bool
 domainUnpause domid handle = liftIO $ fmap (== 0) $ Low.xc_domain_unpause handle domid
+
+-- | Shutdown domain. This is intended for use in fully-virtualized domains where
+-- this operation is analogous to the sched_op operations in a paravirtualized domain.
+domainShutdown :: MonadIO m => DomId -> DomainShutdownReason -> XcHandle -> m Bool
+domainShutdown domid reason handle = liftIO $ fmap (== 0) $ allocaBytes size $ \ptr -> do
+    poke ptr reason
+    intReason <- peek $ castPtr ptr
+    Low.xc_domain_shutdown handle domid intReason
+  where
+    size = sizeOf (undefined :: DomainShutdownReason)
