@@ -65,20 +65,20 @@ foreign import ccall unsafe "xenctrl.h xc_domain_getinfo"
 -- however it does not receive any timeslices from the hypervisor.
 foreign import ccall unsafe "xenctrl.h xc_domain_pause"
     xc_domain_pause :: XcHandle -- ^ Handle to the open hypervisor interface
-                    -> DomId    -- ^ First domain to enumerate from.
+                    -> DomId    -- ^ Domain to pause
                     -> IO CInt  -- ^ 0 if success, -1 if error
 
--- This function unpauses a domain. The domain should have been previously paused.
+-- | This function unpauses a domain. The domain should have been previously paused.
 foreign import ccall unsafe "xenctrl.h xc_domain_unpause"
     xc_domain_unpause :: XcHandle -- ^ Handle to the open hypervisor interface
-                    -> DomId    -- ^ First domain to enumerate from.
-                    -> IO CInt  -- ^ 0 if success, -1 if error
+                      -> DomId    -- ^ Domain to unpause
+                      -> IO CInt  -- ^ 0 if success, -1 if error
 
--- This function will shutdown a domain. This is intended for use in
+-- | This function will shutdown a domain. This is intended for use in
 -- fully-virtualized domains where this operation is analogous to the
 -- sched_op operations in a paravirtualized domain.
 foreign import ccall unsafe "xenctrl.h xc_domain_shutdown"
     xc_domain_shutdown :: XcHandle -- ^ Handle to the open hypervisor interface
-                    -> DomId    -- ^ First domain to enumerate from.
-                    -> CInt     -- ^ Shutdown reason
-                    -> IO CInt  -- ^ 0 if success, -1 if error
+                       -> DomId    -- ^ Domain to shutdown
+                       -> CInt     -- ^ Shutdown reason
+                       -> IO CInt  -- ^ 0 if success, -1 if error
