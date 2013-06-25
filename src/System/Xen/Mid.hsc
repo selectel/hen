@@ -69,7 +69,7 @@ domainGetInfo handle = liftIO $ allocaBytes size $ \ptr -> do
 domainPause :: MonadIO m => DomId -> XcHandle -> m Bool
 domainPause domid handle = liftIO $ fmap (== 0) $ Low.xc_domain_pause handle domid
 
--- Unpause a domain. The domain should have been previously paused.
+-- | Unpause a domain. The domain should have been previously paused.
 domainUnpause :: MonadIO m => DomId -> XcHandle -> m Bool
 domainUnpause domid handle = liftIO $ fmap (== 0) $ Low.xc_domain_unpause handle domid
 
