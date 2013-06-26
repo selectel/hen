@@ -21,7 +21,11 @@ module System.Xen.Mid
 
 #include <xenctrl.h>
 
-import Control.Monad (void, when, forM)
+import Prelude hiding (sequence)
+
+import Control.Applicative (Alternative(..), pure)
+import Control.Monad (void, when)
+import Data.Traversable (Traversable(sequenceA))
 import Foreign.Marshal.Alloc (allocaBytes)
 import Foreign.Storable (peekElemOff, peek, poke, sizeOf)
 import Foreign.Ptr (castPtr)
@@ -54,16 +58,20 @@ interfaceClose = void . liftIO . Low.xc_interface_close
 -- | Returns a list of currently runing domains, 1024 maximum, can fail with
 -- 'System.Xen.Errors.InvalidDomainShutdownReason' and
 -- 'System.Xen.Errors.DomainGetInfoError'.
-domainGetInfo :: MonadIO m => XcHandle -> m [DomainInfo]
+domainGetInfo :: (MonadIO m, Alternative t, Traversable t) => XcHandle -> m (t DomainInfo)
 domainGetInfo handle = liftIO $ allocaBytes size $ \ptr -> do
      wrote <- fmap fromIntegral $ Low.xc_domain_getinfo handle (dom0) count ptr
      when (wrote == -1) $ getErrno >>= throwM . DomainGetInfoError
-     forM [0 .. wrote - 1] $ peekElemOff ptr
+     sequenceA $ generateA wrote $ peekElemOff ptr
   where
     dom0 = DomId 0
     count :: Num a => a
     count = 1024
     size = count * sizeOf (undefined :: DomainInfo)
+    generateA c = go empty c c
+      where
+        go t 0 _ _ = t
+        go t n l a = n `seq` go (pure (a (l - n)) <|> t) l (n - 1) a
 
 -- | Pause domain. A paused domain still exists in memory
 -- however it does not receive any timeslices from the hypervisor.
