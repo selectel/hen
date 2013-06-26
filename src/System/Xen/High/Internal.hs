@@ -76,9 +76,12 @@ instance (MonadXen m, Monoid w) => MonadXen (StrictRWS.RWST r w s m) where
 -- * The @transformers@-style monad transfomer
 ------------------------------------------------------------------------------
 
+-- | A Xen transformer. This transformers keeps connection to the Xen
+-- hypervisor interface.
 newtype XenT m a = XenT { unXenT :: ReaderT XcHandle m a }
     deriving (Functor, Applicative, Monad, MonadTrans, MonadIO, MonadCatch)
 
+-- | Most simple 'XenT' implementation.
 type Xen = XenT IO
 
 instance (Functor m, MonadIO m, MonadCatch m) => MonadXen (XenT m) where
