@@ -22,16 +22,16 @@ import Control.Monad.RWS (MonadRWS)
 import Control.Monad.State (MonadState(..))
 import Control.Monad.Writer (MonadWriter(..))
 
-import Control.Monad.Trans.Identity (IdentityT(..))
 import Control.Monad.Trans (MonadIO, MonadTrans(lift))
-import qualified Control.Monad.Trans.Cont as Cont
-import qualified Control.Monad.Trans.Error as Error
-import qualified Control.Monad.Trans.State.Lazy as LazyState
-import qualified Control.Monad.Trans.State.Strict as StrictState
-import qualified Control.Monad.Trans.Writer.Lazy as LazyWriter
-import qualified Control.Monad.Trans.Writer.Strict as StrictWriter
-import qualified Control.Monad.Trans.RWS.Lazy as LazyRWS
-import qualified Control.Monad.Trans.RWS.Strict as StrictRWS
+import Control.Monad.Trans.Identity (IdentityT(..))
+import qualified Control.Monad.Cont as Cont
+import qualified Control.Monad.Error as Error
+import qualified Control.Monad.State.Lazy as LazyState
+import qualified Control.Monad.State.Strict as StrictState
+import qualified Control.Monad.Writer.Lazy as LazyWriter
+import qualified Control.Monad.Writer.Strict as StrictWriter
+import qualified Control.Monad.RWS.Lazy as LazyRWS
+import qualified Control.Monad.RWS.Strict as StrictRWS
 
 import System.Xen.Types (XcHandle)
 import qualified System.Xen.Mid as Mid
