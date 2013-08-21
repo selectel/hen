@@ -24,7 +24,7 @@ Library
     Build-depends:      base                      == 4.6.* || == 4.5.*
                       , transformers              == 0.3.*
                       , mtl                       == 2.1.* || == 2.0.*
-                      , exceptions                == 0.1.*
+                      , exceptions                == 0.3.*
                       , uuid                      == 1.2.*
                       , bitset                    == 1.4.*
 
@@ -46,7 +46,7 @@ Test-suite hen-tests
     Build-depends:      base                      == 4.6.* || == 4.5.*
                       , transformers              == 0.3.*
                       , mtl                       == 2.1.* || == 2.0.*
-                      , exceptions                == 0.1.*
+                      , exceptions                == 0.3.*
                       , uuid                      == 1.2.*
                       , bitset                    == 1.4.*
                       , hen
