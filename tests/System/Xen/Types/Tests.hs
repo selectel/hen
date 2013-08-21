@@ -13,9 +13,8 @@ import Foreign.Storable (Storable(..))
 
 import Data.BitSet (BitSet, fromList, member)
 import Data.UUID (UUID, fromWords)
-import Test.Framework (Test, testGroup)
-import Test.Framework.Providers.QuickCheck2 (testProperty)
-import Test.QuickCheck (Property, Arbitrary(..), elements)
+import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.QuickCheck (Property, Arbitrary(..), elements, testProperty)
 import Test.QuickCheck.Monadic (monadicIO, assert, run)
 
 import System.Xen.Types (DomId(..), DomainShutdownReason(..), DomainInfo(..),
@@ -78,7 +77,7 @@ testStorable storable = monadicIO $ do
   where
     size = sizeOf storable
 
-tests :: Test
+tests :: TestTree
 tests = testGroup "System.Xen.Types.Tests"
     [ testProperty "Storable instance for DomainShutdownReason" (testStorable :: DomainShutdownReason -> Property)
     , testProperty "Storable instance for DomainInfo" (testStorable :: DomainInfo -> Property)

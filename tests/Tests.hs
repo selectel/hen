@@ -1,10 +1,10 @@
 module Main where
 
-import Test.Framework (defaultMain)
+import Test.Tasty (defaultMain, testGroup)
 
 import qualified System.Xen.Types.Tests
 
 main :: IO ()
-main = defaultMain
+main = defaultMain $ testGroup "Tests"
     [ System.Xen.Types.Tests.tests
     ]
