@@ -5,7 +5,7 @@ hen [![Build Status][travis-img]][travis]
 [travis-img]: https://secure.travis-ci.org/selectel/hen.png
 
 `hen` is a Haskell bindings to Xen hypervisor interface. Key feature of
-`xen` is that you can use a single library to interact with both Xen3 and
+`hen` is that you can use a single library to interact with both Xen3 and
 Xen4 hypervisor versions.
 
 The API is split into three levels:
