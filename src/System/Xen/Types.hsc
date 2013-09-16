@@ -22,7 +22,6 @@ import Prelude hiding (elem, foldl)
 import Control.Applicative ((<$>))
 import Data.Bits (testBit, bit, (.|.))
 import Data.Maybe (catMaybes)
-import Data.Foldable (foldl)
 import Data.Word (Word32, Word64)
 import Foreign.C (CInt(..), CUInt(..))
 #if XEN_SYSCTL_INTERFACE_VERSION == 8
@@ -154,7 +153,7 @@ instance Storable DomainInfo where
         #{poke xc_dominfo_t, domid} ptr domainInfoId
         #{poke xc_dominfo_t, ssidref} ptr domainInfoSsidRef
         let off = sizeOf domainInfoId + sizeOf domainInfoSsidRef
-        let flags :: CUInt = foldl (\a b -> a .|. bit (fromEnum b)) 0 domainInfoFlags
+        let flags :: CUInt = BitSet.foldl' (\a b -> a .|. bit (fromEnum b)) 0 domainInfoFlags
         pokeByteOff ptr off flags
         case domainInfoShutdownReason of
             Nothing -> return ()
