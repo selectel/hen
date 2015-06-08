@@ -12,6 +12,7 @@ module System.Xen.Errors
     ) where
 
 import Control.Exception (Exception)
+import Data.Orphans ()
 import Data.Typeable (Typeable)
 import Foreign.C (CInt)
 import Foreign.C.Error (Errno(..))
@@ -21,7 +22,6 @@ import Control.Monad.Trans (MonadIO(liftIO))
 
 deriving instance Ord Errno
 deriving instance Show Errno
-deriving instance Typeable Errno
 
 -- | This error can be raised if handle can not be opened, insufficient rights
 -- for example.
