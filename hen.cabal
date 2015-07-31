@@ -22,7 +22,7 @@ Library
     Default-language:   Haskell2010
 
     Build-depends:      base                      == 4.7.* || == 4.6.* || == 4.5.*
-                      , base-orphans              == 0.3.*
+                      , base-orphans              == 0.4.*
                       , transformers              == 0.3.*
                       , mtl                       == 2.1.* || == 2.0.*
                       , exceptions                == 0.3.*
